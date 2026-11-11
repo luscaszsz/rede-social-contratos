@@ -4,6 +4,16 @@ import io.micrometer.core.instrument.MeterRegistry;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import org.caixa.client.ContasGateway;
+import org.caixa.config.PixConfig;
+import org.caixa.dto.NovaChaveRequest;
+import org.caixa.dto.TrocaContaRequest;
+import org.caixa.enums.TipoChave;
+import org.caixa.exception.ChaveDuplicadaException;
+import org.caixa.exception.ChaveNaoEncontradaException;
+import org.caixa.exception.LimiteDeChavesException;
+import org.caixa.model.ChavePix;
+import org.caixa.repository.ChavePixRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;

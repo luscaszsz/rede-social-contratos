@@ -14,6 +14,10 @@ import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.UriInfo;
+import org.caixa.dto.ChavePixResponse;
+import org.caixa.dto.NovaChaveRequest;
+import org.caixa.model.ChavePix;
+import org.caixa.service.ChavePixService;
 import org.jboss.resteasy.reactive.RestResponse;
 
 import java.net.URI;
@@ -26,7 +30,7 @@ import java.util.List;
 @Path("/chaves")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-public class ChavePixResource {
+public class FeedResource {
 
     @Inject
     ChavePixService service;
