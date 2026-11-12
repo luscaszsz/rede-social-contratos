@@ -6,7 +6,6 @@ import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
-import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
@@ -15,8 +14,8 @@ import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.UriInfo;
 import org.caixa.dto.ChavePixResponse;
-import org.caixa.dto.NovaChaveRequest;
-import org.caixa.model.ChavePix;
+import org.caixa.dto.PublicacaoRequest;
+import org.caixa.model.PublicacaoModel;
 import org.caixa.service.ChavePixService;
 import org.jboss.resteasy.reactive.RestResponse;
 
@@ -37,8 +36,8 @@ public class FeedResource {
 
     @POST
     @Timed(value = "pix.chaves.cadastro", description = "Tempo de resposta do cadastro de chave")
-    public RestResponse<ChavePixResponse> cadastrar(NovaChaveRequest request, @Context UriInfo uriInfo) {
-        ChavePix chave = service.cadastrar(request);
+    public RestResponse<ChavePixResponse> cadastrar(PublicacaoRequest request, @Context UriInfo uriInfo) {
+        PublicacaoModel chave = service.cadastrar(request);
         URI location = uriInfo.getAbsolutePathBuilder().path(chave.id.toString()).build();
         return RestResponse.ResponseBuilder.<ChavePixResponse>created(location).entity(ChavePixResponse.de(chave)).build();
     }
@@ -48,21 +47,22 @@ public class FeedResource {
         return service.listar(titularCpf).stream().map(ChavePixResponse::de).toList();
     }
 
-    @GET
-    @Path("/{id}")
-    public ChavePixResponse buscar(@PathParam("id") Long id) {
-        return ChavePixResponse.de(service.buscar(id));
-    }
-
-    @PUT
-    @Path("/{id}")
-    public ChavePixResponse trocarConta(@PathParam("id") Long id, TrocaContaRequest request) {
-        return ChavePixResponse.de(service.trocarConta(id, request));
-    }
-
     @DELETE
     @Path("/{id}")
     public void remover(@PathParam("id") Long id) {
         service.remover(id);
     }
+
+    //    @GET
+//    @Path("/{id}")
+//    public ChavePixResponse buscar(@PathParam("id") Long id) {
+//        return ChavePixResponse.de(service.buscar(id));
+
+//    }
+//    @PUT
+//    @Path("/{id}")
+//    public ChavePixResponse trocarConta(@PathParam("id") Long id, TrocaContaRequest request) {
+//        return ChavePixResponse.de(service.trocarConta(id, request));
+
+//    }
 }

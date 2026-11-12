@@ -2,6 +2,8 @@ package org.caixa.repository;
 
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import jakarta.enterprise.context.ApplicationScoped;
+import org.caixa.enums.TipoChave;
+import org.caixa.model.PublicacaoModel;
 
 import java.util.List;
 
@@ -10,9 +12,9 @@ import java.util.List;
  * vêm prontos de PanacheRepository; aqui ficam só as consultas do domínio.
  */
 @ApplicationScoped
-public class ChavePixRepository implements PanacheRepository<ChavePix> {
+public class ChavePixRepository implements PanacheRepository<PublicacaoModel> {
 
-    public List<ChavePix> findByTitular(String titularCpf) {
+    public List<PublicacaoModel> findByTitular(String titularCpf) {
         return list("titularCpf", titularCpf);
     }
 

@@ -7,6 +7,7 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
+import org.caixa.enums.TipoChave;
 
 import java.time.LocalDateTime;
 
@@ -17,7 +18,7 @@ import java.time.LocalDateTime;
  */
 @Entity
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = {"tipo", "valor"}))
-public class ChavePix extends PanacheEntity {
+public class PublicacaoModel extends PanacheEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

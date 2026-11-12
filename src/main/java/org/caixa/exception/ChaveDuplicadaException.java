@@ -2,6 +2,7 @@ package org.caixa.exception;
 
 import jakarta.ws.rs.ClientErrorException;
 import jakarta.ws.rs.core.Response;
+import org.caixa.enums.TipoChave;
 
 /**
  * Aula 2: a exceção já carrega o status HTTP (409), como um @ResponseStatus do Spring.

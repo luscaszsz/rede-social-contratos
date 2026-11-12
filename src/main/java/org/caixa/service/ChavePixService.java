@@ -6,13 +6,11 @@ import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import org.caixa.client.ContasGateway;
 import org.caixa.config.PixConfig;
-import org.caixa.dto.NovaChaveRequest;
-import org.caixa.dto.TrocaContaRequest;
+import org.caixa.dto.PublicacaoRequest;
 import org.caixa.enums.TipoChave;
 import org.caixa.exception.ChaveDuplicadaException;
 import org.caixa.exception.ChaveNaoEncontradaException;
-import org.caixa.exception.LimiteDeChavesException;
-import org.caixa.model.ChavePix;
+import org.caixa.model.PublicacaoModel;
 import org.caixa.repository.ChavePixRepository;
 
 import java.time.LocalDateTime;
@@ -36,46 +34,31 @@ public class ChavePixService {
 
     @Inject
     ContasGateway contas;
+    //ContratoGateway contrato;
 
     @Transactional
-    public ChavePix cadastrar(NovaChaveRequest request) {
+    public PublicacaoModel cadastrar(PublicacaoRequest request) {
         String valor = valorDaChave(request);
         exigirChaveInedita(request.tipo(), valor);
-        exigirVagaNaConta(request.agencia(), request.numeroConta());
         // Regras locais primeiro; a chamada remota só acontece se elas passarem.
-        contas.confirmarConta(request.agencia(), request.numeroConta());
-        ChavePix chave = new ChavePix();
-        chave.tipo = request.tipo();
-        chave.valor = valor;
-        chave.agencia = request.agencia();
-        chave.numeroConta = request.numeroConta();
-        chave.titularCpf = request.titularCpf();
-        chave.criadaEm = LocalDateTime.now();
-        repository.persist(chave);
-        registry.counter("pix.chaves.cadastradas", "tipo", chave.tipo.name()).increment();
-        return chave;
+        //contas.confirmarConta(request.agencia(), request.numeroConta());
+        PublicacaoModel publicacaoModel = new PublicacaoModel();
+        publicacaoModel.tipo = request.tipo();
+        publicacaoModel.valor = valor;
+        publicacaoModel.numeroConta = request.numeroConta();
+        publicacaoModel.titularCpf = request.titularCpf();
+        publicacaoModel.criadaEm = LocalDateTime.now();
+        repository.persist(publicacaoModel);
+        registry.counter("pix.chaves.cadastradas", "tipo", publicacaoModel.tipo.name()).increment();
+        return publicacaoModel;
     }
 
-    public List<ChavePix> listar(String titularCpf) {
+    public List<PublicacaoModel> listar(String titularCpf) {
         return titularCpf == null ? repository.listAll() : repository.findByTitular(titularCpf);
     }
 
-    public ChavePix buscar(Long id) {
+    public PublicacaoModel buscar(Long id) {
         return repository.findByIdOptional(id).orElseThrow(() -> new ChaveNaoEncontradaException(id));
-    }
-
-    @Transactional
-    public ChavePix trocarConta(Long id, TrocaContaRequest request) {
-        ChavePix chave = buscar(id);
-        if (!jaEstaNaConta(chave, request.agencia(), request.numeroConta())) {
-            // A própria chave não conta no limite: "trocar" para a conta em que ela já está não ocupa vaga nova.
-            exigirVagaNaConta(request.agencia(), request.numeroConta());
-        }
-        contas.confirmarConta(request.agencia(), request.numeroConta());
-        chave.agencia = request.agencia();
-        chave.numeroConta = request.numeroConta();
-        // Sem save(): a entidade está gerenciada e o Hibernate grava a mudança no commit.
-        return chave;
     }
 
     @Transactional
@@ -85,7 +68,7 @@ public class ChavePixService {
         }
     }
 
-    private String valorDaChave(NovaChaveRequest request) {
+    private String valorDaChave(PublicacaoRequest request) {
         return request.tipo() == TipoChave.ALEATORIA ? UUID.randomUUID().toString() : request.valor();
     }
 
@@ -95,14 +78,7 @@ public class ChavePixService {
         }
     }
 
-    private void exigirVagaNaConta(String agencia, String numeroConta) {
-        int limite = config.chaves().limitePorConta();
-        if (repository.countByConta(agencia, numeroConta) >= limite) {
-            throw new LimiteDeChavesException(agencia, numeroConta, limite);
-        }
-    }
-
-    private static boolean jaEstaNaConta(ChavePix chave, String agencia, String numeroConta) {
+    private static boolean jaEstaNaConta(PublicacaoModel chave, String agencia, String numeroConta) {
         return chave.agencia.equals(agencia) && chave.numeroConta.equals(numeroConta);
     }
 }

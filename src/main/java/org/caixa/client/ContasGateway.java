@@ -2,6 +2,9 @@ package org.caixa.client;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import org.caixa.dto.ContaResponse;
+import org.caixa.exception.ContaInexistenteException;
+import org.caixa.exception.ContasIndisponivelException;
 import org.eclipse.microprofile.faulttolerance.CircuitBreaker;
 import org.eclipse.microprofile.faulttolerance.Fallback;
 import org.eclipse.microprofile.faulttolerance.Retry;
