@@ -28,10 +28,7 @@ public class PublicacaoModel extends PanacheEntity {
     public String valor;
 
     @Column(nullable = false)
-    public String agencia;
-
-    @Column(nullable = false)
-    public String numeroConta;
+    public String mensagem;
 
     @Column(nullable = false)
     public String titularCpf;

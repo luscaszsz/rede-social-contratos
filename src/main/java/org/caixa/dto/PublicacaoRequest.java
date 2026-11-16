@@ -11,7 +11,5 @@ public record PublicacaoRequest(
         TipoChave tipo,
         String valor,
         String mensagem,
-        String numeroConta,
-        String titularCpf,
-        LocalDateTime momentoPublicacao) {
+        String titularCpf) {
 }

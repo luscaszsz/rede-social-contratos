@@ -41,13 +41,12 @@ public class ChavePixService {
         String valor = valorDaChave(request);
         exigirChaveInedita(request.tipo(), valor);
         // Regras locais primeiro; a chamada remota só acontece se elas passarem.
-        //contas.confirmarConta(request.agencia(), request.numeroConta());
         PublicacaoModel publicacaoModel = new PublicacaoModel();
         publicacaoModel.tipo = request.tipo();
         publicacaoModel.valor = valor;
-        publicacaoModel.numeroConta = request.numeroConta();
         publicacaoModel.titularCpf = request.titularCpf();
         publicacaoModel.criadaEm = LocalDateTime.now();
+        publicacaoModel.mensagem = request.mensagem();
         repository.persist(publicacaoModel);
         registry.counter("pix.chaves.cadastradas", "tipo", publicacaoModel.tipo.name()).increment();
         return publicacaoModel;
@@ -78,7 +77,4 @@ public class ChavePixService {
         }
     }
 
-    private static boolean jaEstaNaConta(PublicacaoModel chave, String agencia, String numeroConta) {
-        return chave.agencia.equals(agencia) && chave.numeroConta.equals(numeroConta);
-    }
 }
