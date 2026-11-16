@@ -53,12 +53,12 @@ public class FeedResource {
         service.remover(id);
     }
 
-    //    @GET
-//    @Path("/{id}")
-//    public ChavePixResponse buscar(@PathParam("id") Long id) {
-//        return ChavePixResponse.de(service.buscar(id));
+    @GET
+    @Path("/{id}")
+    public ChavePixResponse buscar(@PathParam("id") Long id) {
+        return ChavePixResponse.de(service.buscar(id));
 
-//    }
+    }
 //    @PUT
 //    @Path("/{id}")
 //    public ChavePixResponse trocarConta(@PathParam("id") Long id, TrocaContaRequest request) {

@@ -27,7 +27,6 @@ public class PublicacaoModel extends PanacheEntity {
     @Column(nullable = false)
     public String valor;
 
-    @Column(nullable = false)
     public String mensagem;
 
     @Column(nullable = false)
