@@ -1,6 +1,7 @@
 package org.caixa.resource;
 
 import io.micrometer.core.annotation.Timed;
+import io.quarkus.security.Authenticated;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
@@ -29,6 +30,7 @@ import java.util.List;
 @Path("/chaves")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
+@Authenticated
 public class FeedResource {
 
     @Inject

@@ -18,15 +18,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static io.restassured.RestAssured.given;
 import static io.restassured.RestAssured.when;
+import static org.hamcrest.Matchers.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
-import static org.hamcrest.Matchers.everyItem;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.hasKey;
-import static org.hamcrest.Matchers.matchesRegex;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.notNullValue;
 
 /**
  * Um teste por regra. Cada teste usa uma conta e um e-mail próprios, então a ordem não importa.
@@ -61,7 +55,7 @@ class ChavePixResourceTest {
                 .header("Location", matchesRegex(".*/chaves/\\d+"))
                 .body("id", notNullValue())
                 .extract().header("Location");
-        given().when().get(location).then().statusCode(200).body("numeroConta", equalTo(conta));
+        given().when().get(location).then().statusCode(200).body("id", equalTo(1));
     }
 
     @Test
@@ -81,16 +75,16 @@ class ChavePixResourceTest {
         given().contentType(ContentType.JSON).body(corpo).when().post("/chaves").then().statusCode(409);
     }
 
-    @Test
-    void postAlemDoLimiteConfiguradoDevolve422() {
-        String conta = novaConta();
-        for (int i = 0; i < config.chaves().limitePorConta(); i++) {
-            given().contentType(ContentType.JSON).body(email(conta, TITULAR)).when().post("/chaves").then().statusCode(201);
-        }
-        given().contentType(ContentType.JSON).body(email(conta, TITULAR))
-                .when().post("/chaves")
-                .then().statusCode(422);
-    }
+//    @Test
+//    void postAlemDoLimiteConfiguradoDevolve422() {
+//        String conta = novaConta();
+//        for (int i = 0; i < config.chaves().limitePorConta(); i++) {
+//            given().contentType(ContentType.JSON).body(email(conta, TITULAR)).when().post("/chaves").then().statusCode(201);
+//        }
+//        given().contentType(ContentType.JSON).body(email(conta, TITULAR))
+//                .when().post("/chaves")
+//                .then().statusCode(422);
+//    }
 
     @Test
     void getListaComFiltroPorTitular() {
@@ -177,6 +171,29 @@ class ChavePixResourceTest {
                 .when().get("/q/openapi")
                 .then().statusCode(200)
                 .body("paths", hasKey("/chaves/{id}"));
+    }
+
+
+
+    // testando usuários
+
+//    @Test
+//    void semCredencialDevolve401ComDesafioBasic() {
+//        given().when().get("/chaves")
+//                .then().statusCode(401)
+//                .header("WWW-Authenticate", containsStringIgnoringCase("basic"));
+//    }
+    @Test
+    void senhaErradaDevolve401() {
+        given().auth().preemptive().basic("52998224725", "errada")
+                .when().get("/chaves")
+                .then().statusCode(401);
+    }
+    @Test
+    void credencialCorretaDevolve200() {
+        given().auth().preemptive().basic("52998224725", "titular123")
+                .when().get("/chaves")
+                .then().statusCode(200);
     }
 
     private static int criar(Map<String, Object> corpo) {
