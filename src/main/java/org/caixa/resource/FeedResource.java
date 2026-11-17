@@ -3,19 +3,13 @@ package org.caixa.resource;
 import io.micrometer.core.annotation.Timed;
 import io.quarkus.security.Authenticated;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.DELETE;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
-import jakarta.ws.rs.Produces;
-import jakarta.ws.rs.QueryParam;
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.UriInfo;
 import org.caixa.dto.ChavePixResponse;
 import org.caixa.dto.PublicacaoRequest;
+import org.caixa.dto.TrocaConteudoRequest;
 import org.caixa.model.PublicacaoModel;
 import org.caixa.service.ChavePixService;
 import org.jboss.resteasy.reactive.RestResponse;
@@ -61,10 +55,12 @@ public class FeedResource {
         return ChavePixResponse.de(service.buscar(id));
 
     }
-//    @PUT
-//    @Path("/{id}")
-//    public ChavePixResponse trocarConta(@PathParam("id") Long id, TrocaContaRequest request) {
-//        return ChavePixResponse.de(service.trocarConta(id, request));
 
-//    }
+
+    @PUT
+    @Path("/{id}")
+    public ChavePixResponse trocarConteudoPublicacao(@PathParam("id") Long id, TrocaConteudoRequest request) {
+        return ChavePixResponse.de(service.trocarConteudoPublicacao(id, request));
+
+    }
 }

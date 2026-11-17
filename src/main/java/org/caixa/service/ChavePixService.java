@@ -7,6 +7,7 @@ import jakarta.transaction.Transactional;
 import org.caixa.client.ContasGateway;
 import org.caixa.config.PixConfig;
 import org.caixa.dto.PublicacaoRequest;
+import org.caixa.dto.TrocaConteudoRequest;
 import org.caixa.enums.TipoChave;
 import org.caixa.exception.ChaveDuplicadaException;
 import org.caixa.exception.ChaveNaoEncontradaException;
@@ -56,15 +57,31 @@ public class ChavePixService {
         return titularCpf == null ? repository.listAll() : repository.findByTitular(titularCpf);
     }
 
+
+    // busca publicacao
     public PublicacaoModel buscar(Long id) {
         return repository.findByIdOptional(id).orElseThrow(() -> new ChaveNaoEncontradaException(id));
     }
 
+    // remover publicacao
     @Transactional
     public void remover(Long id) {
         if (!repository.deleteById(id)) {
             throw new ChaveNaoEncontradaException(id);
         }
+    }
+
+    @Transactional
+    public PublicacaoModel trocarConteudoPublicacao(Long id, TrocaConteudoRequest request) {
+        PublicacaoModel publicacaoModel = buscar(id);
+//        if (!jaEstaNaConta(chave, request.agencia(), request.numeroConta())) {
+//            // A própria chave não conta no limite: "trocar" para a conta em que ela já está não ocupa vaga nova.
+//            exigirVagaNaConta(request.agencia(), request.numeroConta());
+//        }
+//        contas.confirmarConta(request.agencia(), request.numeroConta());
+        publicacaoModel.mensagem = request.novaMensagem();
+        // Sem save(): a entidade está gerenciada e o Hibernate grava a mudança no commit.
+        return publicacaoModel;
     }
 
     private String valorDaChave(PublicacaoRequest request) {
