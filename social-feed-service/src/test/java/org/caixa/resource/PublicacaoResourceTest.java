@@ -35,6 +35,7 @@ class PublicacaoResourceTest {
         reset(clienteContratos);
         when(clienteContratos.listar()).thenReturn(List.of(resumoContrato()));
         when(clienteContratos.buscar(2L)).thenReturn(resumoContrato());
+        when(clienteContratos.buscar(77L)).thenReturn(resumoContrato(77L));
     }
 
     @Test
@@ -106,6 +107,24 @@ class PublicacaoResourceTest {
     }
 
     @Test
+    void limitaTresPublicacoesDoMesmoUsuarioParaOContrato() {
+        for (int indice = 1; indice <= 3; indice++) {
+            given().auth().preemptive().basic(USUARIO, SENHA)
+                    .contentType(ContentType.JSON)
+                    .body("{\"content\":\"Publicação limitada " + indice + "\",\"contractId\":77}")
+                    .when().post("/api/posts")
+                    .then().statusCode(201);
+        }
+
+        given().auth().preemptive().basic(USUARIO, SENHA)
+                .contentType(ContentType.JSON)
+                .body("{\"content\":\"Quarta publicação limitada\",\"contractId\":77}")
+                .when().post("/api/posts")
+                .then().statusCode(422)
+                .body("status", equalTo(422));
+    }
+
+    @Test
     void atualizaPublicacaoComSucesso() {
         Long id = criarPublicacaoSemContrato();
 
@@ -130,6 +149,19 @@ class PublicacaoResourceTest {
     }
 
     @Test
+    void atualizaPublicacaoComConteudoIgualRetorna409() {
+        Long id = criarPublicacaoSemContrato();
+
+        given().auth().preemptive().basic(USUARIO, SENHA)
+                .contentType(ContentType.JSON)
+                .body("{\"content\":\"Publicação temporária.\"}")
+                .when().put("/api/posts/" + id)
+                .then().statusCode(409)
+                .body("status", equalTo(409))
+                .body("error", equalTo("Conflict"));
+    }
+
+    @Test
     void removePublicacaoComSucesso() {
         Long id = criarPublicacaoSemContrato();
 
@@ -147,15 +179,20 @@ class PublicacaoResourceTest {
     }
 
     private Long criarPublicacaoSemContrato() {
-        return given().auth().preemptive().basic(USUARIO, SENHA)
+        Number id = given().auth().preemptive().basic(USUARIO, SENHA)
                 .contentType(ContentType.JSON)
                 .body("{\"content\":\"Publicação temporária.\"}")
                 .when().post("/api/posts")
                 .then().statusCode(201)
                 .extract().path("id");
+        return id.longValue();
     }
 
     private static ResumoContrato resumoContrato() {
-        return new ResumoContrato(2L, "Analista de Sistemas", "Empresa Pública", "EM_ANDAMENTO", LocalDate.of(2025, 2, 1), null);
+        return resumoContrato(2L);
+    }
+
+    private static ResumoContrato resumoContrato(Long id) {
+        return new ResumoContrato(id, "Analista de Sistemas", "Empresa Pública", "EM_ANDAMENTO", LocalDate.of(2025, 2, 1), null, USUARIO);
     }
 }

@@ -10,7 +10,7 @@ public record PublicacaoResponse(@JsonProperty("id") Long id,
                                  @JsonProperty("createdAt") Instant criadaEm,
                                  @JsonProperty("contract") ResumoContrato contrato) {
     public static PublicacaoResponse de(Publicacao publicacao) {
-        ResumoContrato contrato = publicacao.idContrato == null ? null : new ResumoContrato(publicacao.idContrato, publicacao.tituloContrato, publicacao.empresaContrato, publicacao.situacaoContrato, null, null);
+        ResumoContrato contrato = publicacao.idContrato == null ? null : new ResumoContrato(publicacao.idContrato, publicacao.tituloContrato, publicacao.empresaContrato, publicacao.situacaoContrato, null, null, publicacao.nomeUsuario);
         return new PublicacaoResponse(publicacao.id, publicacao.conteudo, publicacao.criadaEm, contrato);
     }
 }

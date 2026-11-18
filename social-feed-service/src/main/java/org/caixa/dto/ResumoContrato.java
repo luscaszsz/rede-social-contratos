@@ -8,5 +8,6 @@ public record ResumoContrato(@JsonProperty("id") Long id,
                              @JsonProperty("company") String empresa,
                              @JsonProperty("status") String situacao,
                              @JsonProperty("startDate") LocalDate dataInicio,
-                             @JsonProperty("endDate") LocalDate dataFim) {
+                             @JsonProperty("endDate") LocalDate dataFim,
+                             @JsonProperty("user") String nomeUsuario) {
 }

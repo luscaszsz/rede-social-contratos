@@ -11,9 +11,10 @@ public record ContratoResponse(@JsonProperty("id") Long id,
                                @JsonProperty("company") String empresa,
                                @JsonProperty("status") ContratoStatus situacao,
                                @JsonProperty("startDate") LocalDate dataInicio,
-                               @JsonProperty("endDate") LocalDate dataFim) {
+                               @JsonProperty("endDate") LocalDate dataFim,
+                               @JsonProperty("user") String nomeUsuario) {
 
     public static ContratoResponse de(Contrato contrato) {
-        return new ContratoResponse(contrato.id, contrato.titulo, contrato.empresa, contrato.situacao, contrato.dataInicio, contrato.dataFim);
+        return new ContratoResponse(contrato.id, contrato.titulo, contrato.empresa, contrato.situacao, contrato.dataInicio, contrato.dataFim, contrato.nomeUsuario);
     }
 }

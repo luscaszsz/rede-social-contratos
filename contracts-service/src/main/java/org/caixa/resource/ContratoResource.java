@@ -1,6 +1,7 @@
 package org.caixa.resource;
 
 import io.micrometer.core.annotation.Counted;
+import io.micrometer.core.annotation.Timed;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -38,6 +39,7 @@ public class ContratoResource {
     @RolesAllowed("USER")
     @Transactional
     @Counted(value = "contracts.created")
+    @Timed(value = "contracts.cadastro", description = "Tempo de resposta do cadastro de contrato")
     public Response criar(@Valid ContratoRequest requisicao, @Context UriInfo informacoesUri) {
         Contrato contrato = servico.criar(requisicao);
         URI localizacao = informacoesUri.getAbsolutePathBuilder().path(contrato.id.toString()).build();

@@ -1,6 +1,7 @@
 package org.caixa.resource;
 
 import io.micrometer.core.annotation.Counted;
+import io.micrometer.core.annotation.Timed;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
@@ -46,6 +47,7 @@ public class PublicacaoResource {
     @POST
     @RolesAllowed("USER")
     @Counted(value = "posts.created")
+    @Timed(value = "feed.publicacoes.cadastro", description = "Tempo de resposta do cadastro de publicação")
     public Response criar(@Valid PublicacaoRequest request, @Context UriInfo uriInfo) {
         Publicacao publicacao = service.criar(request);
         URI location = uriInfo.getAbsolutePathBuilder().path(publicacao.id.toString()).build();

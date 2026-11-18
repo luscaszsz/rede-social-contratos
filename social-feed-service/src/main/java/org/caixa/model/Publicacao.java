@@ -8,12 +8,24 @@ import java.time.Instant;
 
 @Entity
 public class Publicacao extends PanacheEntity {
-    @Column(name = "content", nullable = false, length = 1000)
+    @Column(name = "conteudo", nullable = false, length = 1000)
     public String conteudo;
-    @Column(name = "createdAt", nullable = false)
+
+    @Column(name = "criadaEm", nullable = false)
     public Instant criadaEm;
-    @Column(name = "contractId") public Long idContrato;
-    @Column(name = "contractTitle") public String tituloContrato;
-    @Column(name = "contractCompany") public String empresaContrato;
-    @Column(name = "contractStatus") public String situacaoContrato;
+
+    @Column(name = "idContrato")
+    public Long idContrato;
+
+    @Column(name = "tituloContrato")
+    public String tituloContrato;
+
+    @Column(name = "empresaContrato")
+    public String empresaContrato;
+
+    @Column(name = "situacaoContrato")
+    public String situacaoContrato;
+
+    @Column(name = "nomeUsuario", nullable = false)
+    public String nomeUsuario;
 }

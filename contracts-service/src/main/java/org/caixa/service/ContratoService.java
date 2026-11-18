@@ -1,6 +1,8 @@
 package org.caixa.service;
 
 import jakarta.enterprise.context.ApplicationScoped;
+import io.quarkus.security.identity.SecurityIdentity;
+import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.NotFoundException;
 
@@ -12,6 +14,7 @@ import org.caixa.model.Contrato;
 
 @ApplicationScoped
 public class ContratoService {
+    @Inject SecurityIdentity identidade;
     public List<ContratoResponse> listar() {
         return Contrato.<Contrato>listAll().stream().map(ContratoResponse::de).toList();
     }
@@ -28,6 +31,7 @@ public class ContratoService {
         contrato.situacao = requisicao.situacao();
         contrato.dataInicio = requisicao.dataInicio();
         contrato.dataFim = requisicao.dataFim();
+        contrato.nomeUsuario = identidade.getPrincipal().getName();
         contrato.persist();
         return contrato;
     }
