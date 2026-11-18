@@ -1,0 +1,5 @@
+insert into Publicacao (id, content, createdAt, contractId, contractTitle, contractCompany, contractStatus) values (1, 'Concluí uma etapa profissional importante.', '2026-11-01T10:00:00Z', 1, 'Desenvolvedor Java', 'CAIXA', 'CONCLUIDO');
+insert into Publicacao (id, content, createdAt, contractId, contractTitle, contractCompany, contractStatus) values (2, 'Iniciei um novo desafio.', '2026-11-05T10:00:00Z', 2, 'Analista de Sistemas', 'Empresa Pública', 'EM_ANDAMENTO');
+insert into Publicacao (id, content, createdAt, contractId, contractTitle, contractCompany, contractStatus) values (3, 'Compartilhando uma nova experiência em dados.', '2026-11-10T14:30:00Z', 4, 'Especialista em Dados', 'Inovação Brasil', 'EM_ANDAMENTO');
+insert into Publicacao (id, content, createdAt, contractId, contractTitle, contractCompany, contractStatus) values (4, 'Refletindo sobre uma entrega concluída.', '2026-11-12T09:15:00Z', 5, 'Consultora de Produto', 'Soluções Cidadãs', 'CONCLUIDO');
+alter sequence Publicacao_SEQ restart with 5;
