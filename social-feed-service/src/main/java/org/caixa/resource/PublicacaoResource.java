@@ -19,6 +19,7 @@ import org.caixa.dto.PublicacaoRequest;
 import org.caixa.dto.PublicacaoResponse;
 import org.caixa.model.Publicacao;
 import org.caixa.service.PublicacaoService;
+import org.caixa.usuarios.Papeis;
 
 @Path("/api/posts")
 @Produces(MediaType.APPLICATION_JSON)
@@ -63,7 +64,7 @@ public class PublicacaoResource {
 
     @DELETE
     @Path("/{id}")
-    @RolesAllowed("user")
+    @RolesAllowed({Papeis.USUARIO, Papeis.ADMINISTRADOR})
     public Response remover(@PathParam("id") Long id) {
         service.remover(id);
         return Response.noContent().build();
