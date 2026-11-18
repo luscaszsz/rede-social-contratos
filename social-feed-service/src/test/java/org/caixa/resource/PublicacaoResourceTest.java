@@ -3,10 +3,12 @@ package org.caixa.resource;
 import io.quarkus.test.InjectMock;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
+import io.smallrye.faulttolerance.api.CircuitBreakerMaintenance;
 import org.caixa.client.ClienteContratos;
 import org.caixa.dto.ResumoContrato;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
@@ -16,9 +18,13 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @QuarkusTest
@@ -30,12 +36,21 @@ class PublicacaoResourceTest {
     @RestClient
     ClienteContratos clienteContratos;
 
+    @jakarta.inject.Inject
+    CircuitBreakerMaintenance circuitos;
+
     @BeforeEach
     void prepararClienteDeContratos() {
+        circuitos.resetAll();
         reset(clienteContratos);
         when(clienteContratos.listar()).thenReturn(List.of(resumoContrato()));
         when(clienteContratos.buscar(2L)).thenReturn(resumoContrato());
         when(clienteContratos.buscar(77L)).thenReturn(resumoContrato(77L));
+    }
+
+    @AfterEach
+    void fecharCircuitos() {
+        circuitos.resetAll();
     }
 
     @Test
@@ -74,6 +89,27 @@ class PublicacaoResourceTest {
         given().when().get("/api/posts/available-contracts")
                 .then().statusCode(200)
                 .body("", empty());
+
+        verify(clienteContratos, times(3)).listar();
+    }
+
+    @Test
+    void servicoDeContratosIndisponivelRetorna503ENaoGravaPublicacao() {
+        String conteudo = "Publicação que não deve ser persistida.";
+        doThrow(new RuntimeException("Serviço de contratos fora do ar"))
+                .when(clienteContratos).buscar(2L);
+
+        given().auth().preemptive().basic(USUARIO, SENHA)
+                .contentType(ContentType.JSON)
+                .body("{\"content\":\"" + conteudo + "\",\"contractId\":2}")
+                .when().post("/api/posts")
+                .then().statusCode(503)
+                .body("status", equalTo(503));
+
+        verify(clienteContratos, times(3)).buscar(2L);
+        given().when().get("/api/posts")
+                .then().statusCode(200)
+                .body("content", not(hasItem(conteudo)));
     }
 
     @Test

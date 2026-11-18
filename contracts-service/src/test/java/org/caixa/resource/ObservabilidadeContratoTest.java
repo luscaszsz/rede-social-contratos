@@ -22,9 +22,9 @@ class ObservabilidadeContratoTest {
 
     @Test
     void cadastroRegistraContadorETempo() {
-        given().auth().preemptive().basic("user", "user123")
+        given().auth().preemptive().basic("adm", "adm123")
                 .contentType(ContentType.JSON)
-                .body("{\"title\":\"Contrato de observabilidade\",\"company\":\"Métricas Brasil\",\"status\":\"FUTURO\",\"startDate\":\"2027-08-01\"}")
+                .body("{\"titulo\":\"Contrato de observabilidade\",\"empresa\":\"Métricas Brasil\",\"situacao\":\"FUTURO\", \"responsavel\":\"usuario\",\"dataInicio\":\"2027-08-01\"}")
                 .when().post("/api/contracts")
                 .then().statusCode(201);
 

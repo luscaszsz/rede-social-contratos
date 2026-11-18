@@ -6,8 +6,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.LocalDate;
 import org.caixa.enums.ContratoStatus;
 
-public record ContratoRequest(@JsonProperty("title") @NotBlank String titulo,
-                              @JsonProperty("company") @NotBlank String empresa,
-                              @JsonProperty("status") @NotNull ContratoStatus situacao,
-                              @JsonProperty("startDate") @NotNull LocalDate dataInicio,
-                              @JsonProperty("endDate") LocalDate dataFim) { }
+public record ContratoRequest(@JsonProperty("titulo") @NotBlank String titulo,
+                              @JsonProperty("empresa") @NotBlank String empresa,
+                              @JsonProperty("situacao") @NotNull ContratoStatus situacao,
+                              @JsonProperty("dataInicio") @NotNull LocalDate dataInicio,
+                              @JsonProperty("dataFim") LocalDate dataFim,
+                              @JsonProperty("responsavel") @NotNull String usuario) { }

@@ -16,11 +16,7 @@ public class CargaDeUsuarios {
     @Transactional
     void carregar(@Observes StartupEvent evento) {
         Usuario.deleteAll();
-        Usuario.adicionar("52998224725", "titular123", "titular");
-        Usuario.adicionar("11144477735", "titular123", "titular");
-        Usuario.adicionar("12345678909", "titular123", "titular");
-        Usuario.adicionar("atendente", "atendente123", "atendente");
-        Usuario.adicionar("auditor", "auditor123", "auditor");
+        Usuario.adicionar("adm", "adm123", "admin");
         Usuario.adicionar("user","user123","user");
     }
 }

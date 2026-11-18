@@ -1,5 +1,6 @@
 package org.caixa.service;
 
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.ApplicationScoped;
 import io.quarkus.security.identity.SecurityIdentity;
 import jakarta.inject.Inject;
@@ -11,10 +12,10 @@ import java.util.List;
 import org.caixa.dto.ContratoRequest;
 import org.caixa.dto.ContratoResponse;
 import org.caixa.model.Contrato;
+import org.caixa.usuarios.Papeis;
 
 @ApplicationScoped
 public class ContratoService {
-    @Inject SecurityIdentity identidade;
     public List<ContratoResponse> listar() {
         return Contrato.<Contrato>listAll().stream().map(ContratoResponse::de).toList();
     }
@@ -24,6 +25,7 @@ public class ContratoService {
     }
 
     @Transactional
+    @RolesAllowed(Papeis.ADMINISTRADOR)
     public Contrato criar(ContratoRequest requisicao) {
         Contrato contrato = new Contrato();
         contrato.titulo = requisicao.titulo();
@@ -31,7 +33,7 @@ public class ContratoService {
         contrato.situacao = requisicao.situacao();
         contrato.dataInicio = requisicao.dataInicio();
         contrato.dataFim = requisicao.dataFim();
-        contrato.nomeUsuario = identidade.getPrincipal().getName();
+        contrato.nomeUsuario = requisicao.usuario();
         contrato.persist();
         return contrato;
     }
