@@ -34,7 +34,7 @@ Versões: Quarkus 3.40.1.2 · Java 21.
    - Resultado atual: mvn verify executa **28 testes**, sem falhas.
 
 8. **Uso crítico de IA — nível 2**
-   - A IA foi usada para organizar documentação, sugerir testes e auxiliar correções. O grupo conferiu as alterações pela leitura do código e pela execução dos testes. Foram corrigidos manualmente problemas identificados na integração JSON entre os serviços e no import.sql após alterações das datas da publicação.
+   - A IA foi usada para organizar documentação, sugerir testes e auxiliar correções. Foram corrigidos manualmente problemas identificados nas integrações.
 
 9. **Execução — nível 3**
    - Evidências: README.md documenta comandos, portas e credenciais; docs/dados-de-teste-api.md contém URLs, JSONs e caminhos de sucesso e falha; docs/arquitetura.md descreve a integração.
