@@ -45,7 +45,7 @@ public class PublicacaoResource {
     }
 
     @POST
-    @RolesAllowed("USER")
+    @RolesAllowed("user")
     @Counted(value = "posts.created")
     @Timed(value = "feed.publicacoes.cadastro", description = "Tempo de resposta do cadastro de publicação")
     public Response criar(@Valid PublicacaoRequest request, @Context UriInfo uriInfo) {
@@ -56,14 +56,14 @@ public class PublicacaoResource {
 
     @PUT
     @Path("/{id}")
-    @RolesAllowed("USER")
+    @RolesAllowed("user")
     public PublicacaoResponse atualizar(@PathParam("id") Long id, @Valid PublicacaoRequest request) {
         return PublicacaoResponse.de(service.atualizar(id, request));
     }
 
     @DELETE
     @Path("/{id}")
-    @RolesAllowed("USER")
+    @RolesAllowed("user")
     public Response remover(@PathParam("id") Long id) {
         service.remover(id);
         return Response.noContent().build();

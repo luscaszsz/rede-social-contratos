@@ -36,7 +36,7 @@ public class ContratoResource {
     }
 
     @POST
-    @RolesAllowed("USER")
+    @RolesAllowed("user")
     @Transactional
     @Counted(value = "contracts.created")
     @Timed(value = "contracts.cadastro", description = "Tempo de resposta do cadastro de contrato")
