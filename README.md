@@ -21,7 +21,7 @@ Em dois terminais, na raiz do repositório:
 Para executar a suíte completa:
 
 ```powershell
-.\mvnw.cmd verify --> 27 testes passam.
+.\mvnw.cmd verify  # 28 testes
 ```
 
 ## Credenciais de demonstração
