@@ -28,9 +28,17 @@ class ObservabilidadeContratoTest {
                 .when().post("/api/contracts")
                 .then().statusCode(201);
 
-        given().when().get("/q/metrics")
+        given().auth().preemptive().basic("adm", "adm123")
+                .when().get("/q/metrics")
                 .then().statusCode(200)
                 .body(containsString("contracts_created_total"))
                 .body(containsString("contracts_cadastro_seconds_count"));
+    }
+
+    @Test
+    void metricasExigemPapelAdministrador() {
+        given().auth().preemptive().basic("user", "user123")
+                .when().get("/q/metrics")
+                .then().statusCode(403);
     }
 }

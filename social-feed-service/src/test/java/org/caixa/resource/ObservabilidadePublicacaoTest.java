@@ -49,9 +49,17 @@ class ObservabilidadePublicacaoTest {
                 .when().post("/api/posts")
                 .then().statusCode(201);
 
-        given().when().get("/q/metrics")
+        given().auth().preemptive().basic("adm", "adm123")
+                .when().get("/q/metrics")
                 .then().statusCode(200)
                 .body(containsString("posts_created_total"))
                 .body(containsString("feed_publicacoes_cadastro_seconds_count"));
+    }
+
+    @Test
+    void metricasExigemPapelAdministrador() {
+        given().auth().preemptive().basic("user", "user123")
+                .when().get("/q/metrics")
+                .then().statusCode(403);
     }
 }

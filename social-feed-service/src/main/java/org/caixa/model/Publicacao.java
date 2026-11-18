@@ -5,6 +5,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 
 import java.time.Instant;
+import java.time.LocalDate;
 
 @Entity
 public class Publicacao extends PanacheEntity {
@@ -28,4 +29,10 @@ public class Publicacao extends PanacheEntity {
 
     @Column(name = "nomeUsuario", nullable = false)
     public String nomeUsuario;
+
+    @Column(name = "dataInicio")
+    public LocalDate dataInicio;
+
+    @Column(name = "dataFim")
+    public LocalDate dataFim;
 }

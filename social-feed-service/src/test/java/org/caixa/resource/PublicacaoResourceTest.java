@@ -64,7 +64,9 @@ class PublicacaoResourceTest {
         given().when().get("/api/posts/1")
                 .then().statusCode(200)
                 .body("id", equalTo(1))
-                .body("content", notNullValue());
+                .body("conteudo", notNullValue())
+                .body("dataInicio", equalTo("2026-03-01"))
+                .body("dataFim", equalTo("2026-04-01"));
     }
 
     @Test
@@ -109,7 +111,7 @@ class PublicacaoResourceTest {
         verify(clienteContratos, times(3)).buscar(2L);
         given().when().get("/api/posts")
                 .then().statusCode(200)
-                .body("content", not(hasItem(conteudo)));
+                .body("conteudo", not(hasItem(conteudo)));
     }
 
     @Test
@@ -120,8 +122,9 @@ class PublicacaoResourceTest {
                 .when().post("/api/posts")
                 .then().statusCode(201)
                 .header("Location", notNullValue())
-                .body("content", equalTo("Publicação criada durante o teste."))
-                .body("contract.id", equalTo(2));
+                .body("conteudo", equalTo("Publicação criada durante o teste."))
+                .body("dataInicio", equalTo("2025-02-01"))
+                .body("contrato.id", equalTo(2));
     }
 
     @Test
@@ -170,8 +173,9 @@ class PublicacaoResourceTest {
                 .when().put("/api/posts/" + id)
                 .then().statusCode(200)
                 .body("id", equalTo(id.intValue()))
-                .body("content", equalTo("Conteúdo atualizado."))
-                .body("contract.id", equalTo(2));
+                .body("conteudo", equalTo("Conteúdo atualizado."))
+                .body("dataInicio", equalTo("2025-02-01"))
+                .body("contrato.id", equalTo(2));
     }
 
     @Test
