@@ -1,5 +1,7 @@
 package org.caixa.resource;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import io.quarkus.test.InjectMock;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
@@ -21,6 +23,7 @@ import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
@@ -38,6 +41,9 @@ class PublicacaoResourceTest {
 
     @jakarta.inject.Inject
     CircuitBreakerMaintenance circuitos;
+
+    @jakarta.inject.Inject
+    ObjectMapper mapeadorJson;
 
     @BeforeEach
     void prepararClienteDeContratos() {
@@ -82,6 +88,18 @@ class PublicacaoResourceTest {
                 .then().statusCode(200)
                 .body("size()", equalTo(1))
                 .body("[0].id", equalTo(2));
+    }
+
+    @Test
+    void interpretaRespostaDoServicoDeContratosComNomesEmIngles() throws Exception {
+        ResumoContrato contrato = mapeadorJson.readValue("""
+                {"id":3,"title":"Arquiteto de Software","company":"Laboratório Digital",
+                "status":"FUTURO","startDate":"2027-01-10","endDate":null,"user":"user"}
+                """, ResumoContrato.class);
+
+        assertEquals("user", contrato.nomeUsuario());
+        assertEquals("Arquiteto de Software", contrato.titulo());
+        assertEquals(LocalDate.of(2027, 1, 10), contrato.dataInicio());
     }
 
     @Test
