@@ -67,6 +67,7 @@ public class FeedResource {
 
     @GET
     @Path("/{id}")
+    @RolesAllowed({TITULAR, ATENDENTE})
     public ChavePixResponse buscar(@PathParam("id") Long id) {
         return ChavePixResponse.de(service.buscar(id));
 
