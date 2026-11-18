@@ -1,10 +1,13 @@
 package org.caixa.service;
 
 import io.micrometer.core.instrument.MeterRegistry;
+import io.quarkus.security.ForbiddenException;
+import io.quarkus.security.identity.SecurityIdentity;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import org.caixa.client.ContasGateway;
+import org.caixa.config.Papeis;
 import org.caixa.config.PixConfig;
 import org.caixa.dto.PublicacaoRequest;
 import org.caixa.dto.TrocaConteudoRequest;
@@ -34,8 +37,14 @@ public class ChavePixService {
     MeterRegistry registry;
 
     @Inject
+    SecurityIdentity identidade;
+
+    @Inject
     ContasGateway contas;
     //ContratoGateway contrato;
+
+    private static final String CHAVE_DE_OUTRO = "A chave pertence a outro titular";
+    private static final String LISTA_DE_OUTRO = "Titular só lista as próprias chaves";
 
     @Transactional
     public PublicacaoModel cadastrar(PublicacaoRequest request) {
@@ -53,22 +62,35 @@ public class ChavePixService {
         return publicacaoModel;
     }
 
+    /**
+     java
+     * Titular vê só as próprias chaves: sem filtro, a lista é a dele; filtro com o
+     CPF de outro titular é 403
+     * (mesma regra de posse do GET por id). Atendente e auditor veem todas, com ou
+     sem filtro.
+     */
     public List<PublicacaoModel> listar(String titularCpf) {
-        return titularCpf == null ? repository.listAll() : repository.findByTitular(titularCpf);
+        if (titularCpf != null) {
+            exigirPosse(titularCpf, LISTA_DE_OUTRO);
+        }
+        String filtro = ehTitular() ? usuarioLogado() : titularCpf;
+        return filtro == null ? repository.listAll() :
+                repository.findByTitular(filtro);
     }
 
 
     // busca publicacao
     public PublicacaoModel buscar(Long id) {
-        return repository.findByIdOptional(id).orElseThrow(() -> new ChaveNaoEncontradaException(id));
+        PublicacaoModel chave = repository.findByIdOptional(id).orElseThrow(() -> new
+                ChaveNaoEncontradaException(id));
+        exigirPosse(chave.titularCpf, CHAVE_DE_OUTRO);
+        return chave;
     }
 
     // remover publicacao
     @Transactional
     public void remover(Long id) {
-        if (!repository.deleteById(id)) {
-            throw new ChaveNaoEncontradaException(id);
-        }
+        repository.delete(buscar(id));
     }
 
     @Transactional
@@ -92,6 +114,18 @@ public class ChavePixService {
         if (repository.existeChave(tipo, valor)) {
             throw new ChaveDuplicadaException(tipo, valor);
         }
+    }
+
+    private void exigirPosse(String titularCpf, String mensagem) {
+        if (ehTitular() && !usuarioLogado().equals(titularCpf)) {
+            throw new ForbiddenException(mensagem);
+        }
+    }
+    private boolean ehTitular() {
+        return identidade.hasRole(Papeis.TITULAR);
+    }
+    private String usuarioLogado() {
+        return identidade.getPrincipal().getName();
     }
 
 }

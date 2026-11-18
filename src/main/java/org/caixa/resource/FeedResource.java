@@ -2,6 +2,9 @@ package org.caixa.resource;
 
 import io.micrometer.core.annotation.Timed;
 import io.quarkus.security.Authenticated;
+import jakarta.annotation.security.DenyAll;
+import jakarta.annotation.security.PermitAll;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Context;
@@ -10,12 +13,15 @@ import jakarta.ws.rs.core.UriInfo;
 import org.caixa.dto.ChavePixResponse;
 import org.caixa.dto.PublicacaoRequest;
 import org.caixa.dto.TrocaConteudoRequest;
+import org.caixa.enums.TipoChave;
 import org.caixa.model.PublicacaoModel;
 import org.caixa.service.ChavePixService;
 import org.jboss.resteasy.reactive.RestResponse;
 
 import java.net.URI;
 import java.util.List;
+
+import static org.caixa.config.Papeis.*;
 
 /**
  * Recurso REST das chaves. Só traduz HTTP para chamadas ao service (nível 2 de Richardson:
@@ -24,7 +30,7 @@ import java.util.List;
 @Path("/chaves")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-@Authenticated
+@DenyAll
 public class FeedResource {
 
     @Inject
@@ -32,6 +38,7 @@ public class FeedResource {
 
     @POST
     @Timed(value = "pix.chaves.cadastro", description = "Tempo de resposta do cadastro de chave")
+    @RolesAllowed(TITULAR)
     public RestResponse<ChavePixResponse> cadastrar(PublicacaoRequest request, @Context UriInfo uriInfo) {
         PublicacaoModel chave = service.cadastrar(request);
         URI location = uriInfo.getAbsolutePathBuilder().path(chave.id.toString()).build();
@@ -39,12 +46,21 @@ public class FeedResource {
     }
 
     @GET
+    @RolesAllowed({TITULAR, ATENDENTE, AUDITOR})
     public List<ChavePixResponse> listar(@QueryParam("titular") String titularCpf) {
         return service.listar(titularCpf).stream().map(ChavePixResponse::de).toList();
     }
 
+    @GET
+    @Path("/tipos")
+    @PermitAll
+    public List<TipoChave> tipos() {
+        return List.of(TipoChave.values());
+    }
+
     @DELETE
     @Path("/{id}")
+    @RolesAllowed({TITULAR, ATENDENTE})
     public void remover(@PathParam("id") Long id) {
         service.remover(id);
     }

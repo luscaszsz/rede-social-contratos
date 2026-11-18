@@ -1,6 +1,5 @@
--- This file allow to write SQL commands that will be emitted in test and dev.
--- The commands are commented as their support depends of the database
--- insert into myentity (id, field) values(1, 'field-1');
--- insert into myentity (id, field) values(2, 'field-2');
--- insert into myentity (id, field) values(3, 'field-3');
--- alter sequence myentity_seq restart with 4;
+-- Dados de exemplo (CPFs fictícios com dígito verificador válido).
+-- O id vem da sequence que o Hibernate cria para a entidade (ChavePix_SEQ).
+insert into ChavePix (id, tipo, valor, agencia, numeroConta, titularCpf, criadaEm) values (next value for ChavePix_SEQ, 'CPF', '52998224725', '0001', '123456', '52998224725', '2026-10-28 15:00:00');
+insert into ChavePix (id, tipo, valor, agencia, numeroConta, titularCpf, criadaEm) values (next value for ChavePix_SEQ, 'EMAIL', 'maria@exemplo.com.br', '0001', '123456', '52998224725', '2026-10-28 15:00:00');
+insert into ChavePix (id, tipo, valor, agencia, numeroConta, titularCpf, criadaEm) values (next value for ChavePix_SEQ, 'TELEFONE', '+5561988887777', '0002', '654321', '11144477735', '2026-10-28 15:00:00');
